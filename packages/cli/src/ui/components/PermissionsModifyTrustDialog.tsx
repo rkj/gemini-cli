@@ -71,7 +71,7 @@ export function PermissionsModifyTrustDialog({
         const success = commitTrustLevelChange();
         if (success) {
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          relaunchApp();
+          relaunchApp({ withResume: true });
         } else {
           onExit();
         }

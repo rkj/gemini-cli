@@ -37,7 +37,7 @@ export const FolderTrustDialog: React.FC<FolderTrustDialogProps> = ({
     const doRelaunch = async () => {
       if (isRestarting) {
         setTimeout(async () => {
-          await relaunchApp();
+          await relaunchApp({ withResume: true });
         }, 250);
       }
     };

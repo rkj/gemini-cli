@@ -23,7 +23,10 @@ import { useKeypress } from '../hooks/useKeypress.js';
 import { validateAuthMethodWithSettings } from './useAuth.js';
 import { runExitCleanup } from '../../utils/cleanup.js';
 import { Text } from 'ink';
-import { RELAUNCH_EXIT_CODE } from '../../utils/processUtils.js';
+import {
+  RELAUNCH_EXIT_CODE,
+  RELAUNCH_WITH_RESUME_EXIT_CODE,
+} from '../../utils/processUtils.js';
 
 // Mocks
 vi.mock('@google/gemini-cli-core', async (importOriginal) => {
@@ -296,7 +299,7 @@ describe('AuthDialog', () => {
       await vi.runAllTimersAsync();
 
       expect(mockedRunExitCleanup).toHaveBeenCalled();
-      expect(exitSpy).toHaveBeenCalledWith(RELAUNCH_EXIT_CODE);
+      expect(exitSpy).toHaveBeenCalledWith(RELAUNCH_WITH_RESUME_EXIT_CODE);
 
       exitSpy.mockRestore();
       logSpy.mockRestore();

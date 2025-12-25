@@ -18,8 +18,7 @@ import { ApiAuthDialog } from '../auth/ApiAuthDialog.js';
 import { EditorSettingsDialog } from './EditorSettingsDialog.js';
 import { PrivacyNotice } from '../privacy/PrivacyNotice.js';
 import { ProQuotaDialog } from './ProQuotaDialog.js';
-import { runExitCleanup } from '../../utils/cleanup.js';
-import { RELAUNCH_EXIT_CODE } from '../../utils/processUtils.js';
+import { relaunchApp } from '../../utils/processUtils.js';
 import { SessionBrowser } from './SessionBrowser.js';
 import { PermissionsModifyTrustDialog } from './PermissionsModifyTrustDialog.js';
 import { ModelDialog } from './ModelDialog.js';
@@ -28,7 +27,6 @@ import { useUIState } from '../contexts/UIStateContext.js';
 import { useUIActions } from '../contexts/UIActionsContext.js';
 import { useConfig } from '../contexts/ConfigContext.js';
 import { useSettings } from '../contexts/SettingsContext.js';
-import process from 'node:process';
 import { type UseHistoryManagerReturn } from '../hooks/useHistoryManager.js';
 import { IdeTrustChangeDialog } from './IdeTrustChangeDialog.js';
 
@@ -141,8 +139,7 @@ export const DialogManager = ({
           settings={settings}
           onSelect={() => uiActions.closeSettingsDialog()}
           onRestartRequest={async () => {
-            await runExitCleanup();
-            process.exit(RELAUNCH_EXIT_CODE);
+            await relaunchApp({ withResume: true });
           }}
           availableTerminalHeight={terminalHeight - staticExtraHeight}
           config={config}

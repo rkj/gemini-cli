@@ -14,7 +14,10 @@ import {
   type MockInstance,
 } from 'vitest';
 import { EventEmitter } from 'node:events';
-import { RELAUNCH_EXIT_CODE } from './processUtils.js';
+import {
+  RELAUNCH_EXIT_CODE,
+  RELAUNCH_WITH_RESUME_EXIT_CODE,
+} from './processUtils.js';
 import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 
@@ -79,6 +82,28 @@ describe('relaunchOnExitCode', () => {
 
     expect(runner).toHaveBeenCalledTimes(3);
     expect(processExitSpy).toHaveBeenCalledWith(0);
+  });
+
+  it('should continue running and add --resume=latest when RELAUNCH_WITH_RESUME_EXIT_CODE is returned', async () => {
+    let callCount = 0;
+    const originalArgv = [...process.argv];
+
+    const runner = vi.fn().mockImplementation(async () => {
+      callCount++;
+      if (callCount === 1) return RELAUNCH_WITH_RESUME_EXIT_CODE;
+      return 0; // Exit on second call
+    });
+
+    await expect(relaunchOnExitCode(runner)).rejects.toThrow(
+      'PROCESS_EXIT_CALLED',
+    );
+
+    expect(runner).toHaveBeenCalledTimes(2);
+    expect(processExitSpy).toHaveBeenCalledWith(0);
+    expect(process.argv).toContain('--resume=latest');
+
+    // Restore argv
+    process.argv = originalArgv;
   });
 
   it('should handle runner errors', async () => {

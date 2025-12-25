@@ -19,7 +19,7 @@ export const IdeTrustChangeDialog = ({ reason }: IdeTrustChangeDialogProps) => {
     (key) => {
       if (key.name === 'r' || key.name === 'R') {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        relaunchApp();
+        relaunchApp({ withResume: true });
       }
     },
     { isActive: true },

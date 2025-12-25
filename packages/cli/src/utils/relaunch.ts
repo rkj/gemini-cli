@@ -5,12 +5,22 @@
  */
 
 import { spawn } from 'node:child_process';
-import { RELAUNCH_EXIT_CODE } from './processUtils.js';
+import {
+  RELAUNCH_EXIT_CODE,
+  RELAUNCH_WITH_RESUME_EXIT_CODE,
+} from './processUtils.js';
 
 export async function relaunchOnExitCode(runner: () => Promise<number>) {
   while (true) {
     try {
       const exitCode = await runner();
+
+      if (exitCode === RELAUNCH_WITH_RESUME_EXIT_CODE) {
+        if (!process.argv.includes('--resume')) {
+          process.argv.push('--resume=latest');
+        }
+        continue;
+      }
 
       if (exitCode !== RELAUNCH_EXIT_CODE) {
         process.exit(exitCode);
