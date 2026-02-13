@@ -304,9 +304,14 @@ export function createPolicyUpdater(
     async (message: UpdatePolicy) => {
       const toolName = message.toolName;
 
-      if (message.commandPrefix) {
-        // Convert commandPrefix(es) to argsPatterns for in-memory rules
-        const patterns = buildArgsPatterns(undefined, message.commandPrefix);
+      if (message.commandPrefix || message.skillName) {
+        // Convert commandPrefix(es) or skillName to argsPatterns for in-memory rules
+        const patterns = buildArgsPatterns(
+          undefined,
+          message.commandPrefix,
+          undefined,
+          message.skillName,
+        );
         for (const pattern of patterns) {
           if (pattern) {
             policyEngine.addRule({
@@ -383,6 +388,16 @@ export function createPolicyUpdater(
 
           if (message.commandPrefix) {
             newRule.commandPrefix = message.commandPrefix;
+          } else if (message.skillName) {
+            const patterns = buildArgsPatterns(
+              undefined,
+              undefined,
+              undefined,
+              message.skillName,
+            );
+            if (patterns[0]) {
+              newRule.argsPattern = patterns[0];
+            }
           } else if (message.argsPattern) {
             newRule.argsPattern = message.argsPattern;
           }
